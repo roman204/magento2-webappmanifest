@@ -50,6 +50,10 @@
                     <label>App Icon Sizes</label>
                     <comment><![CDATA[A space separated list of sizes to allow showing the icon at.]]></comment>
                 </field>
+                <field id="scope" translate="label comment" type="text" sortOrder="503" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Application Scope</label>
+                    <comment><![CDATA[The scope member is a string that defines the navigation scope of this web application's application context.It restricts what web pages can be viewed while the manifest is applied. If the user navigates outside the scope, it reverts to a normal web page inside a browser tab or window. (see https://developer.mozilla.org/en-US/docs/Web/Manifest/scope)]]></comment>
+                </field>
             </group>
         </section>
     </system>
