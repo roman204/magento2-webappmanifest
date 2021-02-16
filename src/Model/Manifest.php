@@ -50,8 +50,8 @@ class Manifest implements ManifestInterface
             $this->populateFromConfig(self::XML_PATH_DISPLAY_BACKGROUND_COLOR),
             $this->populateFromConfig(self::XML_PATH_DISPLAY_DISPLAY_TYPE),
             $this->populateFromConfig(self::XML_PATH_DISPLAY_ORIENTATION),
-            $this->populateFromConfig(self::XML_PATH_SCOPE),
-            $this->populateIcons()
+            $this->populateIcons(),
+            $this->populateFromConfig(self::XML_PATH_SCOPE)
         );
 
         return $manifestData->toArray();
