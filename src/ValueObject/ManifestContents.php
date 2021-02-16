@@ -22,6 +22,8 @@ class ManifestContents
     private $orientation;
     /** @var array */
     private $icons;
+    /** @var string */
+    private $scope;
 
     /**
      * @param string|null $shortName
@@ -33,6 +35,7 @@ class ManifestContents
      * @param string|null $display
      * @param string|null $orientation
      * @param array|null $icons
+     * @param string|null $scope
      */
     public function __construct(
         ?string $shortName = null,
@@ -43,7 +46,8 @@ class ManifestContents
         ?string $backgroundColor = null,
         ?string $display = null,
         ?string $orientation = null,
-        ?array $icons = []
+        ?array $icons = [],
+        ?string $scope = null
     ) {
         $this->shortName = $shortName;
         $this->name = $name;
@@ -54,6 +58,7 @@ class ManifestContents
         $this->display = $display;
         $this->orientation = $orientation;
         $this->icons = $icons;
+        $this->scope = $scope;
     }
 
     /**
@@ -66,6 +71,7 @@ class ManifestContents
      * @param string|null $display
      * @param string|null $orientation
      * @param array|null $icons
+     * @param string|null $scope
      * @return ManifestContents
      */
     public static function fromConfigData(
@@ -77,7 +83,8 @@ class ManifestContents
         ?string $backgroundColor = null,
         ?string $display = null,
         ?string $orientation = null,
-        ?array $icons = []
+        ?array $icons = [],
+        ?string $scope = null
     ): self {
         return new self(
             $shortName,
@@ -88,7 +95,8 @@ class ManifestContents
             $backgroundColor,
             $display,
             $orientation,
-            $icons
+            $icons,
+            $scope
         );
     }
 
@@ -107,6 +115,7 @@ class ManifestContents
             'display' => $this->display,
             'orientation' => $this->orientation,
             'icons' => $this->icons,
+            'scope' => $this->scope,
         ];
 
         return array_filter($beforeFilter);
