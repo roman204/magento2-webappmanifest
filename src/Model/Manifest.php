@@ -20,6 +20,7 @@ class Manifest implements ManifestInterface
     const XML_PATH_DISPLAY_ORIENTATION = 'web/webappmanifest/orientation';
     const XML_PATH_ICONS_ICON = 'web/webappmanifest/icon';
     const XML_PATH_ICONS_SIZES = 'web/webappmanifest/icon_sizes';
+    const XML_PATH_SCOPE = 'web/webappmanifest/scope';
 
     /** @var ScopeConfigInterface */
     private $scopeConfig;
@@ -49,6 +50,7 @@ class Manifest implements ManifestInterface
             $this->populateFromConfig(self::XML_PATH_DISPLAY_BACKGROUND_COLOR),
             $this->populateFromConfig(self::XML_PATH_DISPLAY_DISPLAY_TYPE),
             $this->populateFromConfig(self::XML_PATH_DISPLAY_ORIENTATION),
+            $this->populateFromConfig(self::XML_PATH_SCOPE),
             $this->populateIcons()
         );
 
