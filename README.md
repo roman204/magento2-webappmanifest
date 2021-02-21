@@ -6,7 +6,7 @@ A Magento 2 extension that adds a [Web App Manifest](https://developer.mozilla.o
 
 Install this extension via Composer:
 
-    composer require ampersand/magento2-webappmanifest
+    composer require roman204/magento2-webappmanifest
 
 ## Usage
 
