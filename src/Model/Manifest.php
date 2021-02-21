@@ -70,11 +70,6 @@ class Manifest implements ManifestInterface
     protected function populateIcons(): array
     {
         if ($icon = $this->populateFromConfig(self::XML_PATH_ICONS_ICON)) {
-            $url = implode('', [
-                $this->urlBuilder->getBaseUrl(['_type' => UrlInterface::URL_TYPE_MEDIA]),
-                'webappmanifest/icons/',
-                $icon,
-            ]);
             $imageSizes = [];
 
             $sizes = explode(" ", $this->populateFromConfig(self::XML_PATH_ICONS_SIZES));
@@ -87,7 +82,7 @@ class Manifest implements ManifestInterface
                 ];
             }
 
-            return [$imageSizes];
+            return $imageSizes;
         }
 
         return [];
