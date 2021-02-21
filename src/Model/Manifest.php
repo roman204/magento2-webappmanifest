@@ -21,6 +21,7 @@ class Manifest implements ManifestInterface
     const XML_PATH_ICONS_ICON = 'web/webappmanifest/icon';
     const XML_PATH_ICONS_SIZES = 'web/webappmanifest/icon_sizes';
     const XML_PATH_SCOPE = 'web/webappmanifest/scope';
+    const ICON_STORAGE_PATH = "webappmanifest/icons/";
 
     /** @var ScopeConfigInterface */
     private $scopeConfig;
@@ -30,10 +31,16 @@ class Manifest implements ManifestInterface
 
     public function __construct(
         ScopeConfigInterface $scopeConfig,
-        UrlInterface $urlBuilder
+        UrlInterface $urlBuilder,
+        \Magento\Framework\Filesystem $filesystem,
+        \Magento\Framework\Image\AdapterFactory $imageFactory,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->urlBuilder = $urlBuilder;
+        $this->fileSystem = $filesystem;
+        $this->imageFactory = $imageFactory;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -68,13 +75,61 @@ class Manifest implements ManifestInterface
                 'webappmanifest/icons/',
                 $icon,
             ]);
+            $imageSizes = [];
 
-            $sizes = $this->populateFromConfig(self::XML_PATH_ICONS_SIZES);
+            $sizes = explode(" ", $this->populateFromConfig(self::XML_PATH_ICONS_SIZES));
+            foreach ($sizes as $size) {
+                $imageSrcResized = $this->createIcon($icon, $size);
+                $imageSizes[] = [
+                    "src"   => $imageSrcResized["url"],
+                    "sizes" => $size,
+                    "type"  => $imageSrcResized["type"]
+                ];
+            }
 
-            return [['src' => $url, 'sizes' => $sizes]];
+            return [$imageSizes];
         }
 
         return [];
+    }
+
+    private function createIcon($image, $imageDimensions)
+    {
+        //parse width and height of 72x72
+        preg_match_all('/(.*)x(.*)/m', $imageDimensions, $matches, PREG_SET_ORDER, 0);
+        $width = $matches[0][1];
+        $height = $matches[0][2];
+
+        $absolutePath = $this->fileSystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA)
+                            ->getAbsolutePath(self::ICON_STORAGE_PATH) . $image;
+        if (!file_exists($absolutePath)) {
+            return false;
+        }
+        $imageResized = $this->fileSystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA)
+                            ->getAbsolutePath(self::ICON_STORAGE_PATH . 'resized/' . $imageDimensions . '/') . $image;
+
+        if (!file_exists($imageResized)) { // Only resize image if not already exists.
+            //create image factory...
+            $imageResize = $this->imageFactory->create();
+            $imageResize->open($absolutePath);
+            $imageResize->constrainOnly(true);
+            $imageResize->keepTransparency(true);
+            $imageResize->keepFrame(false);
+            $imageResize->keepAspectRatio(true);
+            $imageResize->resize($width, $height);
+            //destination folder
+            $destination = $imageResized;
+            //save image
+            $imageResize->save($destination);
+        }
+
+        $mime = getimagesize($imageResized)["mime"];
+        $resizedURL = $this->storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) .
+                      self::ICON_STORAGE_PATH . 'resized/' . $imageDimensions . '/' . $image;
+        return [
+            "url"  => $resizedURL,
+            "type" => $mime,
+        ];
     }
 
     /**
