@@ -67,7 +67,7 @@ class Manifest implements ManifestInterface
     /**
      * @return array
      */
-    protected function populateIcons(): array
+    public function populateIcons(): array
     {
         if ($icon = $this->populateFromConfig(self::XML_PATH_ICONS_ICON)) {
             $imageSizes = [];
